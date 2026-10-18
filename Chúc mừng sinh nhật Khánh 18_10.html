@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chúc mừng sinh nhật Khánh 18/10</title>
+<style>
+:root{color-scheme:dark;--bg:#04050a;--text:#fff;--muted:#ffffffb0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#04050a;--text:#fff;--muted:#ffffffb0}}
+:root[data-theme="dark"]{--bg:#04050a;--text:#fff;--muted:#ffffffb0}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;
+ background:radial-gradient(ellipse at center,#04050acc 0%,#04050a66 55%,transparent 80%)}
+.date{letter-spacing:.4em;font-size:.85rem;color:var(--muted);margin-bottom:20px}
+#line{font-size:clamp(1.4rem,4.6vw,2.6rem);font-weight:700;line-height:1.4;max-width:900px;min-height:3.2em;display:flex;align-items:center;justify-content:center;
+ text-shadow:0 0 18px #000,0 0 6px #000;transition:opacity .8s}
+#line.out{opacity:0}
+#line.final{font-size:clamp(2rem,8vw,4.6rem);background:linear-gradient(90deg,#ff3b3b,#ff9b21,#ffe23b,#3bff6b,#2bd4ff,#4a6bff,#c24bff,#ff3b3b);background-size:200% 100%;
+ -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;animation:flow 4s linear infinite;filter:drop-shadow(0 0 14px #000)}
+@keyframes flow{to{background-position:200% 0}}
+.cur{display:inline-block;width:.08em;height:1em;background:currentColor;margin-left:4px;vertical-align:-.12em;animation:blink 1s steps(1) infinite}
+#line.final .cur{display:none}
+@keyframes blink{50%{opacity:0}}
+button{margin-top:28px;padding:10px 22px;border-radius:999px;border:1px solid #ffffff55;background:#ffffff14;color:var(--text);font-size:1rem;cursor:pointer;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .6s}
+button.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="stage">
+  <div class="date">18 · 10</div>
+  <div id="line"></div>
+  <button id="again">Xem lại 🌈</button>
+</div>
+<script>
+(function(){
+  var cv=document.getElementById('c'),ctx=cv.getContext('2d');
+  var fs=14,cols=0,drops=[],W=0,H=0,t=0;
+  var chars='HAPPY♥BIRTHDAY♥';
+  function resize(){
+    var d=window.devicePixelRatio||1;
+    W=window.innerWidth;H=window.innerHeight;
+    cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+    cols=Math.ceil(W/fs);
+    drops=[];for(var i=0;i<cols;i++)drops.push(Math.random()*-50);
+    ctx.fillStyle='#04050a';ctx.fillRect(0,0,W,H);
+  }
+  window.addEventListener('resize',resize);resize();
+  function draw(){
+    t+=1;
+    ctx.fillStyle='rgba(4,5,10,0.05)';ctx.fillRect(0,0,W,H);
+    ctx.font='bold '+fs+'px monospace';
+    var rows=Math.ceil(H/fs),n=chars.length;
+    for(var i=0;i<cols;i++){
+      var hue=(i/cols*360+t*1.2)%360;
+      var x=i*fs;
+      for(var k=0;k<3;k++){
+        var r=(((drops[i]+k*rows/3)%rows)+rows)%rows;
+        var rr=Math.floor(r),y=rr*fs;
+        var ch=chars.charAt((((rr+i)%n)+n)%n);
+        ctx.fillStyle='hsl('+hue+',100%,85%)';
+        ctx.fillText(ch,x,y);
+        ctx.fillStyle='hsl('+hue+',100%,55%)';
+        ctx.fillText(chars.charAt((((rr+i-1)%n)+n)%n),x,y-fs);
+        ctx.fillText(chars.charAt((((rr+i-2)%n)+n)%n),x,y-2*fs);
+      }
+      drops[i]+=0.5+(i%5)*0.12;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  var lines=[
+    'Hôm nay là ngày 18 tháng 10…',
+    'Một ngày thật đặc biệt, vì hôm nay là sinh nhật của Khánh.',
+    'Chúc Khánh tuổi mới luôn khỏe mạnh và bình an.',
+    'Chúc Khánh cười thật nhiều, vui thật nhiều mỗi ngày.',
+    'Chúc mọi dự định của Khánh đều trở thành hiện thực.',
+    'Chúc cuộc sống của Khánh rực rỡ như bảy sắc cầu vồng 🌈',
+    'Chúc mừng sinh nhật Khánh! 🎂🎉'
+  ];
+  var el=document.getElementById('line'),btn=document.getElementById('again'),run=0;
+  function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+  async function type(text,id){
+    el.textContent='';
+    var cur=document.createElement('span');cur.className='cur';
+    var node=document.createTextNode('');
+    el.appendChild(node);el.appendChild(cur);
+    var arr=Array.from(text);
+    for(var i=0;i<arr.length;i++){
+      if(id!==run)return false;
+      node.nodeValue+=arr[i];
+      await sleep(55);
+    }
+    return true;
+  }
+  async function play(){
+    var id=++run;
+    btn.classList.remove('show');
+    el.className='';
+    for(var i=0;i<lines.length;i++){
+      var last=i===lines.length-1;
+      el.className=last?'final':'';
+      if(!(await type(lines[i],id)))return;
+      if(last)break;
+      await sleep(1800);
+      if(id!==run)return;
+      el.classList.add('out');
+      await sleep(800);
+      el.classList.remove('out');
+    }
+    btn.classList.add('show');
+  }
+  btn.addEventListener('click',play);
+  play();
+})();
+</script>
+</body>
+</html>
